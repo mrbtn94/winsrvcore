@@ -1,3 +1,4 @@
+0-  You should run yml files on python virtual environment and install pyvmomi on it. 
 1-	Check v-center configuration from hosts.ini file.
 2-	Open create_vm_from_template.yml file
 3-	Customize vm configuration
