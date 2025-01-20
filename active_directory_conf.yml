@@ -1,0 +1,22 @@
+---
+- name: Install and Configure Domain Controller
+  hosts: windows
+  tasks:
+    - name: Install Domain Controller
+      win_shell: |
+        Import-Module ADDSDeployment
+        Install-ADDSForest `
+          -DomainName "bbzr3.local" `
+          -SafeModeAdministratorPassword (ConvertTo-SecureString "Tehran@4321$" -AsPlainText -Force) `
+          -InstallDns `
+          -Force
+      args:
+        executable: powershell
+      register: install_result
+      failed_when: install_result.rc != 0
+
+    - name: Reboot after installation
+      win_reboot:
+        msg: "Rebooting after installation"
+      when: install_result is changed
+

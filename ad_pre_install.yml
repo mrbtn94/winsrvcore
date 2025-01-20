@@ -1,0 +1,11 @@
+---
+- name: Install prerequisites for Active Directory
+  hosts: windows
+  tasks:
+    - name: Install required Windows features
+      ansible.windows.win_feature:
+        name:
+          - RSAT-AD-Tools
+          - AD-Domain-Services
+        state: present
+        include_management_tools: true

@@ -1,0 +1,46 @@
+---
+- name: create users from csv file
+  hosts: windows
+  tasks:
+   - name: reading csv file
+     read_csv:
+      path: users.csv
+     delegate_to: localhost
+     register: user_list
+   - name: display user_list data
+     debug:
+      msg: "{{ user_list.list }}"
+   - name: print
+     debug:
+      msg: "{{ item.FirstName }}"
+     loop: "{{ user_list.list}}"
+
+
+
+   - name: create ou from csv file
+     community.windows.win_domain_ou:
+      name: "{{ item.OU }}"
+      path: "DC=bbzr3,DC=local"
+      state: present
+     register: ou_creation
+     loop: "{{user_list.list}}"
+
+
+   - name: show results
+     debug:
+       var: ou_creation
+
+
+   - name: Create Users from csv
+     community.windows.win_domain_user:
+      name: "{{ item.Username }}"
+      firstname: "{{ item.FirstName }}"
+      surname: "{{ item.LastName }}"
+      password: "{{ item.Password }}"
+      path: ou="{{ item.OU }}",dc=bbzr3,dc=local
+     register: user_creation
+     loop: "{{ user_list.list }}"
+
+   - name: show results
+     debug:
+      var: user_creation

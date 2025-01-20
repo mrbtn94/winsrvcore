@@ -1,0 +1,45 @@
+---
+- name: Create Windows Server Core From Template
+  hosts: vcenter
+  gather_facts: no
+  tasks:
+    - name: Create the Virtual Machine-Wincore
+      vmware_guest:
+        hostname: "{{ ansible_host }}"
+        username: "{{ ansible_user }}"
+        password: "{{ ansible_password }}"
+        validate_certs: False
+        datacenter: "BBO-Datacenter"
+        folder: "BBO-Datacenter/vm"
+        esxi_hostname: "10.20.151.247"
+#        guest_id: "ubuntu64Guest"
+        name: "WindowsServerCore-Test"
+        template: "winsrvcore-tmp"
+        state: poweredon
+        disk:
+          - size_gb: 50
+            type: thin
+            datastore: "151.247_HDD1"
+        hardware:
+          memory_mb: 8192
+          num_cpus: 2
+       # cdrom:
+         # - controller_number: 0
+            #controller_type: "ide"
+            #state: "present"
+            #type: iso
+            #iso_path: "[151.247_HDD1] ISO/en_windows_server_2019_updated_may_2021_x64_dvd_b153c852.iso"
+        networks:
+          - name: "VM Network"
+            ip: "10.20.151.226"
+            netmask: "255.255.255.0"
+            gateway: "10.20.151.1"
+            type: "static"
+            dns_servers:
+              - "10.20.151.1"
+              - "8.8.4.4"
+        customization:
+            hostname: "BBZR-DC3"
+            password: "Tehran$4321"
+      delegate_to: localhost
+
